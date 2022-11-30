@@ -22,9 +22,9 @@ GIF Images
 
 ## 기술 스택
 
-| JavaScript | TypeScript |  HTML   |  Spring  |
-| :--------: | :--------: | :------: | :-----: |
-|   ![js]    |   ![ts]    | ![html] | ![Spring] |
+| JavaScript |  HTML   |  Spring  |
+| :--------: | :------: | :-----: |
+|   ![js]    | ![html] | ![Spring] |
 
 <br>
 
