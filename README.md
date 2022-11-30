@@ -24,7 +24,7 @@ GIF Images
 
 | JavaScript | TypeScript |  HTML   |  Spring  |
 | :--------: | :--------: | :------: | :-----: |
-|   ![js]    |   ![ts]    | ![react] | ![Spring] |
+|   ![js]    |   ![ts]    | ![html] | ![Spring] |
 
 <br>
 
@@ -56,5 +56,5 @@ Seo &copy; [Seo](mailto:aodhzld45@gmail.com)
 
 [js]: /images/stack/javascript.svg
 [ts]: /images/stack/typescript.svg
-[react]: /images/stack/react.svg
+[html]: /images/stack/html.svg
 [Spring]: /images/stack/Spring.svg
