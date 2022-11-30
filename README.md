@@ -50,7 +50,7 @@ GIF Images
 
 ## 라이센스
 
-MIT &copy; [NoHack](mailto:lbjp114@gmail.com)
+Seo &copy; [Seo](mailto:aodhzld45@gmail.com)
 
 <!-- Stack Icon Refernces -->
 
