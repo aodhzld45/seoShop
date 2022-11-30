@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seofriends.mapper.AdOrderMapper">
+
+		<!-- 검색 조건 쿼리. [주문번호 or 주문ID or 결제정보] 선택. value="OMP" -->
+	<!-- typeArr: 파라미터타입의 Criteria클래스의 메서드를 가리킴. 검색종류(타입)의 값을 참조하게 됨. [제목 or 작성자]선택.  value="TW"  -->
+		<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach collection="cri.typeArr" item="type">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'O'.toString()">
+							ODR_CODE like '%' || #{cri.keyword} || '%'
+						</when>
+						<when test="type == 'M'.toString()">
+							MEM_ID like '%' || #{cri.keyword} || '%'
+						</when>
+						<when test="type == 'P'.toString()">
+							PAYMENT_STATUS like '%' || #{cri.keyword} || '%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+	
+	<!--날짜 조건 검색  -->
+	<sql id="period">
+		<if test="startDate != null and !startDate.equals('') and endDate != null and !endDate.equals('')  ">
+			<![CDATA[
+			
+			ODR_DATE >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+			
+			AND
+			
+			ODR_DATE < TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+			
+			AND
+			
+			]]>	
+		
+		</if>
+	</sql>
+	
+	
+
+<!--주문 관리 목록 조회 페이징 적용.  -->
+	<!-- 1)데이타(목록) : 페이징쿼리(인덱스힌트 구문(내림차순.)) -> 인덱스 힌트구문에 에러가나도 동작이됨. -->
+	<select id="adOrderList" parameterType="com.seofriends.dto.Criteria" resultType="com.seofriends.domain.OrderVO" >
+	<![CDATA[
+		SELECT RN, ODR_CODE, MEM_ID, ODR_NAME, ODR_ZIPCODE, ODR_ADDR, ODR_ADDR_D, ODR_PHONE, ODR_REQ_MESSAGE,
+		ODR_TOTAL_PRICE, ODR_DATE, ODR_STATUS, PAYMENT_STATUS, CS_STATUS
+		FROM (
+		    SELECT  /*+ INDEX_DESC(ORDER_TBL PK_ORDER_CODE)*/ ROWNUM RN, ODR_CODE, MEM_ID, ODR_NAME, ODR_ZIPCODE, ODR_ADDR, ODR_ADDR_D, ODR_PHONE, ODR_REQ_MESSAGE,
+		ODR_TOTAL_PRICE, ODR_DATE, ODR_STATUS, PAYMENT_STATUS, CS_STATUS
+			FROM ORDER_TBL
+		    WHERE  
+		]]>    
+		 <include refid="period"></include> 
+		 <include refid="criteria"></include> 
+		<![CDATA[ 
+		   
+		         ROWNUM <= #{cri.pageNum} * #{cri.amount}
+		)
+		WHERE RN > (#{cri.pageNum}-1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<!-- 2)테이블 데이타개수 : 페이징구현사용 -->
+	<select id="getOrderTotalCount" parameterType="com.seofriends.dto.Criteria" resultType="int">
+		SELECT COUNT(*) FROM ORDER_TBL WHERE 
+		
+		<include refid="period"></include> 
+		<include refid="criteria"></include> 
+		
+		ODR_CODE > 0
+	</select>
+	
+	<!-- 주문 상태 변경 (관리자) -->
+	<update id="orderStatusChange">
+		
+		UPDATE
+			ORDER_TBL
+		SET
+			ODR_STATUS = #{odr_status}
+		WHERE
+			ODR_CODE = #{odr_code}
+			
+	</update>
+	
+	<!-- CS 상태 변경 (관리자) -->
+	<update id="orderCsStatusChange">
+		UPDATE
+			ORDER_TBL
+		SET
+			CS_STATUS = #{cs_status}
+		WHERE
+			ODR_CODE = #{odr_code}
+			
+	</update>
+	
+	<!--주문 관리 목록 조회 - 페이징 X 엑셀 다운로드용 -->
+ 	<select id="excelDown" resultType="com.seofriends.domain.OrderVO">
+	SELECT 
+		ODR_CODE, MEM_ID, ODR_NAME, ODR_ZIPCODE, ODR_ADDR, ODR_ADDR_D, ODR_PHONE, ODR_REQ_MESSAGE,
+		ODR_TOTAL_PRICE, ODR_DATE, ODR_STATUS, PAYMENT_STATUS, CS_STATUS
+	FROM 
+		ORDER_TBL
+	ORDER BY ODR_CODE DESC
+	</select> 
+	
+	
+	
+	<!--주문 변경 내역 조회 페이징 적용 X  -->
+	<select id="adOrderHistory" resultType="com.seofriends.domain.OrderVO">
+	SELECT 
+		ODR_CODE, MEM_ID, ODR_NAME, ODR_ZIPCODE, ODR_ADDR, ODR_ADDR_D, ODR_PHONE,
+		ODR_TOTAL_PRICE, ODR_DATE, ODR_STATUS, ODR_EVENT_DATE, STATE_UPDATEDATE, EVENT_NAME
+    FROM 
+    	ORDER_HISTORY_TBL
+	ORDER BY ODR_CODE DESC
+	</select>
+	
+	
+<!-- 관리자가 보는 사용자 주문 상세 목록 - VO를 이용.   -->
+	<select id="adOrderDetailView" resultType="com.seofriends.domain.AdOrderDetailVO">
+	SELECT 
+		O.ODR_CODE, O.MEM_ID, O.ODR_NAME, O.ODR_ZIPCODE, O.ODR_ADDR, O.ODR_ADDR_D, O.ODR_PHONE, O.ODR_REQ_MESSAGE, O.ODR_TOTAL_PRICE, O.ODR_DATE,
+		P.PAY_METHOD, P.PAY_DATE, P.PAY_TOT_PRICE, P.PAY_REST_PRICE, P.PAY_NOBANK_PRICE, P.PAY_NOBANK_USER, P.PAY_NOBANK,
+		PD.PDT_NAME, PD.PDT_PRICE, PD.PDT_IMG_FOLDER, PD.PDT_IMG
+		FROM ORDER_TBL O 
+		    INNER JOIN PAYMENT_TBL P
+		        ON O.ODR_CODE = P.ODR_CODE
+		    INNER JOIN ORDER_DETAIL_TBL OD
+		        ON OD.ODR_CODE = P.ODR_CODE
+		    INNER JOIN PRODUCT_TBL PD
+		        ON OD.PDT_NUM = PD.PDT_NUM
+	WHERE O.ODR_CODE = #{odr_code};
+	
+	</select>
+	
+		
+<!-- 주문 관리 목록 삭제 - 1  -->
+	<delete id="adOrderDelete" parameterType="com.seofriends.domain.OrderVO">
+		DELETE 
+			FROM
+		ORDER_TBL 
+			WHERE ODR_CODE = #{odr_code}
+	</delete>
+
+<!-- 주문 관리 목록 삭제 - 2  -->	
+	<!--  파라미터로 List컬렉션을 사용할 때, mybatis구문에서는 foreach구문에서 collection="list" -->
+	<delete id="orderListDelete">
+		DELETE FROM
+			ORDER_TBL
+		WHERE
+			ODR_CODE IN
+		<foreach collection="list" item="odr_code" open="(" close=")" separator=","> 
+			#{odr_code}
+		</foreach>
+	</delete>
+	
+	<!--결제 테이블 정보 삭제  -->
+	<delete id="paymentDelete" parameterType="Long">
+		DELETE 
+			FROM
+		PAYMENT_TBL 
+			WHERE ODR_CODE = #{odr_code}
+	</delete>
+	
+<!-- 개별 상품 삭제  -->
+	<delete id="orderDetailProductDelete">
+	DELETE FROM 
+		ORDER_DETAIL_TBL
+	WHERE 
+		ODR_CODE = #{odr_code} AND PDT_NUM = #{pdt_num}
+	</delete>
+	
+	<update id="orderTotalPriceChange">
+	UPDATE 
+		ORDER_TBL
+	SET
+		ODR_TOTAL_PRICE = ODR_TOTAL_PRICE - #{odr_price}
+	WHERE 
+		ODR_CODE = #{odr_code}
+	</update>
+	
+	<!-- 주문 상세 개별상품 수량 변경  -->
+	<update id="adOrderUnitChange">
+		UPDATE 
+			ORDER_DETAIL_TBL
+		SET
+			ODR_AMOUNT = #{odr_amount}
+		WHERE
+			ODR_CODE = #{odr_code}
+	</update>
+	
+	
+	<update id="PaymentTotalPriceChange">
+	UPDATE 
+		PAYMENT_TBL
+	SET
+		PAY_TOT_PRICE = PAY_TOT_PRICE - #{odr_price}
+	WHERE 
+		ODR_CODE = #{odr_code}
+	</update>
+	
+	<!-- 주문 정보 -->
+	<select id="getOrderInfo" resultType="com.seofriends.domain.OrderVO">
+		SELECT 
+			 ODR_CODE, MEM_ID, ODR_NAME, ODR_ZIPCODE, ODR_ADDR, ODR_ADDR_D,
+			 ODR_PHONE, ODR_REQ_MESSAGE, ODR_TOTAL_PRICE, ODR_DATE, 
+			 ODR_STATUS, PAYMENT_STATUS, CS_STATUS
+		FROM 
+			ORDER_TBL
+		WHERE
+			ODR_CODE = #{odr_code} 	
+	</select>
+	
+	<!-- 결제 정보  -->
+	<select id="getPaymentInfo" resultType="com.seofriends.domain.PaymentVO">
+		SELECT 
+			PAY_CODE, ODR_CODE, PAY_METHOD, PAY_DATE,
+			PAY_TOT_PRICE, PAY_REST_PRICE, PAY_NOBANK_PRICE,
+			PAY_NOBANK_USER, PAY_NOBANK
+		FROM 
+			PAYMENT_TBL
+		WHERE
+			ODR_CODE = #{odr_code}
+	</select>
+	
+	<select id="getOrderDetailProductCount"  parameterType="long" resultType="int">
+	SELECT 
+		COUNT(*)
+	FROM 
+		ORDER_DETAIL_TBL
+	WHERE
+		ODR_CODE = #{odr_code}
+	</select>
+	
+	
+		<!-- 주문상품정보 
+	<select id="getOrderProductInfo" parameterType="long" resultType="map">
+	
+		SELECT 
+			*
+		FROM 
+			ORDER_TBL O INNER JOIN ORDER_DETAIL_TBL OT
+		ON 
+			O.ODR_CODE = OT.ODR_CODE
+			INNER JOIN PRODUCT_TBL P
+		ON 
+			OT.PDT_NUM = P.PDT_NUM
+		WHERE 
+			O.ODR_CODE = #{odr_code}
+	
+	</select>
+	-->
+	
+	<!-- 주문상품정보 : resultMap 사용 -->
+	<!-- 이미지 폴더 \\ -> // 변환과정에서 p_imgfolder의 get(i) 를 명시 -->
+	<resultMap type="map" id="getOrderProductMap">
+ 		<!-- <result column="odr_code" property="o_code"/>  -->
+		<result column="pdt_name" property="p_name"/>
+		<result column="pdt_img_folder" property="p_imgfolder"/>	
+		<result column="pdt_img" property="p_img"/>		
+<!-- 	<result column="pdt_price" property="p_price" /> 	 -->
+<!-- 	<result column="pdt_discount" property="p_discount" /> 
+		<result column="odr_amount" property="o_amount" />  -->
+		
+	</resultMap>
+	
+	<select id="getOrderProductInfo" parameterType="long" resultMap="getOrderProductMap">
+	
+		SELECT 
+			 P.PDT_IMG_FOLDER, P.PDT_IMG, OT.ODR_CODE, OT.PDT_NUM, P.PDT_NAME, P.PDT_DETAIL,
+			 OT.ODR_AMOUNT, P.PDT_PRICE * OT.ODR_AMOUNT AS ODR_PRICE, O.ODR_STATUS
+		FROM 
+			ORDER_TBL O INNER JOIN ORDER_DETAIL_TBL OT
+		ON 
+			O.ODR_CODE = OT.ODR_CODE
+			INNER JOIN PRODUCT_TBL P
+		ON 
+			OT.PDT_NUM = P.PDT_NUM
+		WHERE 
+			O.ODR_CODE = #{odr_code}
+			
+	</select>
+	
+
+</mapper>

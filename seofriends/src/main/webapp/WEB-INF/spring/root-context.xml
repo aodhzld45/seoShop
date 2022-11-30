@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!--pom.xml에 의해 DI주입 받은 라이브러리 관리 -> root-context.xml  -->
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- pom.xml의 dependency구문에 의하여 다운받은 라이브러리에 존재하는 클래스들을 이용하여 bean(객체)를 생성한 의미. -->
+	<!-- pom.xml의 dependency태그로 참조되는 라이브러리를 스프링에서 사용할때에는 
+		 servlet-context.xml, root-context.xml에서 설정하여, bean으로 사용하게 된다. -->
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<!-- 
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:xe"></property>
+		 -->
+		 
+		 <!--windows 개발용  -->
+		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
+		<property name="jdbcUrl" value="jdbc:log4jdbc:oracle:thin:@localhost:1521:xe"></property>
+		<property name="username" value="seo"></property>
+		<property name="password" value="1013"></property>
+	</bean>	
+	
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="hikariConfig" />
+	</bean>
+	
+	<!-- 데이타베이스 연결과 SQL구문 실행에 대한 모든기능을 가진 객체 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 트랙잭션 설정 구문  -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	
+	<tx:annotation-driven/>
+	
+	<!-- com.demo.mapper 패키지에 존재하는 Interface를 Mapper Interface로 만들어주는 설정구문. -->
+	<mybatis-spring:scan base-package="com.seofriends.mapper"/>
+	
+	
+	<!--메일기능 관련 설정  주석 걸고 갱신 될때마다 확인.-->
+	
+	<!-- https://myaccount.google.com/lesssecureapps 보안수준 낮추기설정 -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	  <property name="host" value="smtp.gmail.com" />
+	  <property name="port" value="587" />
+	  <property name="username" value="aodhzld45@gmail.com" />
+	  <property name="password" value="xmbqiqyrhjigoiwc" />
+	  <property name="javaMailProperties">
+	  <props>
+	    <prop key="mail.smtp.auth">true</prop>
+	    <!--윈도우즈 운영체제 11버전(클라이언트)에 따라 TLS변환 문제가 발생이 되는 듯 추측함.
+	    <prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+	    <prop key="mail.smtp.ssl.protocols">TLSv1.2</prop>
+	      -->  
+	  <prop key="mail.smtp.starttls.enable">true</prop>
+	  </props>
+	  </property>
+	</bean> 
+	
+
+  	<!--AOP 관련 설정  -->
+  	<context:annotation-config></context:annotation-config>
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<!-- <context:component-scan base-package="com.demo.aop" />  -->
+   
+ 	<context:component-scan base-package="com.seofriends.service" />
+ 	<context:component-scan base-package="com.seofriends.util" />
+ 	
+</beans>

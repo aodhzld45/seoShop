@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>웹&앱 기반 데이타 UI개발</title>
+  
+<style type="text/css">
+	table {width:500px; height:500px; 
+		border:5px solid #cac1ca; background-color:#cac1ca; 
+		text-align:left; margin:10px; padding:20px}
+	
+</style>
+<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+	<script type="text/javascript">
+
+$(document).ready(function(){
+
+	var date = new Date();
+	var selYear = date.getFullYear();
+	var selMonth = date.getMonth();
+
+	// 현재년도를 기준으로 호출
+	getYears(selYear);
+
+	// 현재 년도를 select 함.
+	$('#byear').val(selYear);
+
+	// 바뀐 년도를 기준으로 다시 option을 세팅함
+		$('#byear').change(function(){
+			var chgYear = $(this).val();
+			getYears(chgYear);
+			$('#byear').val(chgYear);
+		});
+
+	function getYears(getY){
+
+	// 기존 optopn을 삭제함
+	$("#byear option").remove();
+
+	// 올해 기준으로 -2년부터 +5년을 보여줌.
+	let stY = Number(getY)-100;
+	let enY = Number(getY)+10;
+	for(var y = stY; y <= enY; y++){
+		$('#byear').append("<option value='"+ y +"'>"+ y + " 년" +"</option>");
+	}
+
+	}
+
+	// 월 동적으로 생성(1월부터 12월)
+	let month;
+	$("#bmonth").append("<option value=''>월</option>");
+	for (var i = 1; i <= 12; i++) {
+	$("#bmonth").append("<option value='" + i + "'>" + i + " 월" + "</option>");
+	}
+
+	// 일 동적으로 생성(1월부터 12월)
+	let day;
+	$("#bday").append("<option value=''>일</option>");
+	for (var i = 1; i <= 31; i++) {
+	$("#bday").append("<option value='" + i + "'>" + i + " 일" + "</option>");
+	}
+});
+
+	function check(ri, what, message) {
+		if(ri.test(what.value)) {
+			return true;
+		}
+
+		alert(message);
+		what.value = "";
+		what.focus();
+		//return false;
+	}
+
+
+	function formCheck(form){
+		// 유효성 검사 
+
+		let ri = /^[a-z0-9]{4,16}$/ // 아이디 적합한지 검사 정규식
+
+		let userId = document.getElementById("userId");
+
+		if(!check(ri,userId,"아이디는 4~16자의 영문 소문자와 숫자로 입력해주세요")) {
+           
+			return false;
+			form.userId.focus();
+       }
+
+	//    if(!check(rp,pass,"비밀번호는 영문 최소1개의 숫자 또는 특수문자 조합으로 입력해주세요.")) {
+           
+	// 	   return false;
+	// 	   form.pass.focus();
+	//   }
+
+	   
+
+		if(form.pass.value == ""){
+			alert('비밀번호를 입력하세요');
+			form.pass.focus();
+			return ;
+		}
+
+		if(form.pass2.value == ""){
+			alert('비밀번호 확인을 해주세요.');
+			form.pass2.focus();
+			return ;
+		}
+
+		if(form.userName.value == ""){
+			alert('이름을 입력하세요');
+			form.userName.focus();
+			return ;
+		}
+
+		if(form.email1.value == ""){
+			alert('이메일을 입력해주세요');
+			form.email1.focus();
+			return ;
+		}
+
+		if(form.email2.value == ""){
+			alert('이메일을 모두 입력해주세요');
+			form.email2.focus();
+			return ;
+		}
+
+		if(form.emailchk.value == ""){
+			alert('이메일 수신여부를 체크해주세요');
+			form.email2.focus();
+			return ;
+		}
+
+		if(form.gender.value == ""){
+			alert('성별을 선택해주세요.');
+			form.gender.focus();
+			return ;
+		}
+
+		if(form.byear.value == ""){
+			alert('연도를 선택해주세요');
+			form.byear.focus();
+			return ;
+		}
+
+		if(form.bmonth.value == ""){
+			alert('월을 선택해주세요.');
+			form.bmonth.focus();
+			return ;
+		}
+
+		if(form.bday.value == ""){
+			alert('일을 선택해주세요');
+			form.bday.focus();
+			return ;
+		}
+
+
+
+		alert( form.userId.value+'('+
+			form.userName.value + ") 님의 \n 회원가입이 완료되었습니다."
+			);
+		
+	}
+
+	function passwordCheckFunc(){
+		var pass = document.getElementById("pass").value;
+		var pass2 = document.getElementById("pass2").value;
+
+		if(pass2==""){
+			document.getElementById("passwordCheckText").innerHTML=""
+		}
+		else if (pass!=pass2)
+		{
+			document.getElementById("passwordCheckText").innerHTML="일치하지 않습니다."
+		}
+		else{
+			document.getElementById("passwordCheckText").innerHTML="일치합니다. "
+		}
+	}
+
+
+
+
+</script>
+ </head>
+ <body>
+ <h1> <font color="#3300cc">회원가입</font></h1>
+ <form>
+ <table>
+	<tr><p>기본정보</p></tr>
+  <tr>
+
+   <td>아이디 </td>
+   <td>
+   <input name="userId" id="userId" type = "text" >4-16자의 영문 대소문자와 숫자로만 입력
+   <input type = "button" value = "중복확인">
+   </td>
+  </tr>
+
+  <tr>
+   <td> 비밀번호</td>
+   <td> <input type = "password" id="pass" name="pass"> </td>
+  </tr>
+
+
+  <tr>
+   <td> 비밀번호 확인 </td>
+   <td> <input type = "password"  id="pass2" name="pswdCheck" onkeyup="passwordCheckFunc()"></td>
+	
+  </tr>
+	<tr>
+		<td></td>
+		<td id="passwordCheckText">
+	</tr>
+
+  <tr>
+   <td> 이름 </td>
+   <td> <input type = "text" name="userName" id="userName"> </td>
+  </tr>
+
+  <tr>
+   <td> 이메일 </td>
+   <td>
+    <input id="email1" name="email1" type = "text"> @ <input type = "text" id="email2" name="email2"> &nbsp;&nbsp;
+    <select>
+     <option> 직접입력 </option>
+     <option> naver.com </option>
+     <option> daum.net </option>
+     <option> gmail.com </option>
+    </select>
+   </td>
+  </tr>
+ <td> 이메일 수신여부</td>
+  <td>
+    <input type = "radio" id="emailchk1" name = "emailchk"> 수신
+    <input type = "radio" id="emailchk2" name = "emailchk"> 수신안함
+ </td>	
+
+  <tr>
+   <td> 성별 </td>
+   <td>
+    <input type = "radio" name = "gender" id="gender1" > 남자
+    <input type = "radio" name = "gender" id="gender2" > 여자
+   </td>
+  </tr>
+
+  <tr>
+	
+
+     <td>생년월일</td> 
+	 <td>
+	 <select name="byear" id="byear">
+        <option value="">년</option>
+      </select>
+      <select name="bmonth" id="bmonth">
+       
+      </select>
+	  <select name="bday" id="bday">
+       
+      </select>
+	</td>
+</tr>
+
+<tr>
+	<td><input type = "button" value = "회원가입" onclick="formCheck(this.form)"></td>
+	<td><input type = "reset" value = "다시입력"></td>
+</tr>
+
+
+
+
+</table>
+ </form>
+
+<br>
+
+
+
+</body>
+
+
+</html>

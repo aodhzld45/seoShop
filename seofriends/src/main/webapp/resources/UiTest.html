@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MobileWeb</title>
+    <meta name="viewport" content="width=divice-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=medium-dpi">
+    <style type="text/css">
+        /*    초기화 코드    */
+        *{ margin: 0; padding: 0;}
+        img{ border: 0;}
+       
+        a{ text-decoration: none;}
+
+
+
+        
+        /* main_header */
+        #main_header{
+            height: 45px; background-color: rgb(104, 21, 21);                    
+            position: relative;    /* 자손 위치 지정 */
+            text-align: center;    /* text 가운데 정렬 */
+            line-height: 45px;    /* 줄간격 설정 */
+            border: 5px;
+        }
+        #main_header h1{ color: white;}
+        #main_header > a, #main_header > label { /* a 태그와 label 태그를 선택*/
+            display: block;                
+            height: 32px;
+            position: absolute;
+        }
+        #main_header > a.left{     /* Main 링크 태그의 위치, 크기 지정 */
+            width: 62px;
+            left: 5px; top: 7px;
+        }
+        #main_header > label.right{ /* toggle 의 위치, 크기 지정*/
+            width: 32px;
+            right: 10px; top: 7px;
+        }
+        
+        /* sprite 이미지 사용하기 */
+        #main_header > a.left{
+            width: 32px; left: 5px; top: 7px; /* 영역 크기 및 위치 지정 */  
+            background: url('img/result.png');
+            background-position: 0px 0px;
+            text-indent: -9999px;        /* 링크에 걸린 텍스트를 보이지 않게 화면 밖으로 */
+        }
+        #main_header > label.right{
+            width: 32px; right: 5px; top: 7px;   /* 영역 크기 및 위치 지정 */
+            background: url('img/result.png');
+            background-position: -132px 0px;
+            text-indent: -9999px;            /* label text를 보이지 않도록*/
+        }
+        
+        /* toggle 목록 만들기 */
+        #toggle{ display: none;}  /* checkbox 숨김 */
+        #toggle + #wrap > #toggle_gnb_wrap { display: none; }   /* list 기본 숨김 */
+        #toggle:checked + #wrap > #toggle_gnb_wrap { 
+            /* toggle의 상태가 checked가 되면, toggle_gnb_wrap 영역을 보여준다.*/
+            display: block;
+        } 
+
+        
+        /* Navigation 만들기 (1) */
+        
+        /* Navigation 꾸미기 */
+        #top_gnb{
+            overflow: hidden;
+            border-bottom: 1px solid lightslategray;
+            background-color: rgb(104, 21, 21);;
+        }
+        
+        #top_gnb > div > a{
+            float: left;            /* 메뉴 수평 정렬 */
+            width: 25%; height: 30px;        /* 각 메뉴별 크기 지정 */
+            line-height: 30px;        /* 줄간격 지정함, 텍스트 수직 정렬*/
+            text-align: center;        /* 텍스트 가운데 정렬 */
+            color: white; font-weight: bold;    /* 텍스트 색상 및 굵기 지정 */
+        }
+        .navbar-toggler-icon {
+    	background-image: escape-svg($navbar-dark-toggler-icon-bg);
+
+        }
+
+      footer#main_footer {
+      background-color: #1695A3;
+      text-align: center;
+      color: #eee;
+      font-size: 11px;
+      padding: 0 0 10px 0;
+      }
+      #footer a { color: #eee; }
+      
+    </style>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <script>
+        function setInnerHTML() {
+        const element = document.getElementById('my_div');
+        element.innerHTML 
+            = '<div style="color:blue">InnerHTML<div>';
+        } 
+
+    </script>
+    
+</head>
+<body>
+        <div id="wrap">
+            <header id="main_header">
+                <a class="left" href="#">Main</a>
+                <h1>Mobile</h1>
+                <label for="toggle" class="right">Toggle</label> <!-- checkbox와 lable 연결, label을 클릭하면 checkbox가 checked 상태로 -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+            </header>
+        </div>
+            <hr style="size: 3;">
+
+
+            <!-- navigation -->
+           <div class="main_menu">
+            <nav id="top_gnb">
+                <div><a href="#"><input type='button' value='버튼' onclick='setInnerHTML()'/></a></div>
+                <div><a href="#">버튼</a></div>
+                <div><a href="#">버튼</a></div>
+                <div><a href="#">버튼</a></div>
+            </nav>
+           </div>
+           <hr style="size: 3;">        
+            
+            
+            <div class="sub_menu">
+              <ul>
+                <li>버튼</li>
+                <li>버튼</li>
+                <li>버튼</li>
+                <li>버튼</li>
+                <li>버튼</li>
+              </ul>
+            </div>
+            
+      
+        
+            <hr style="size: 3;">        
+        
+
+       
+        
+        
+      <footer id="main_footer">
+           <div id="title">
+               <h1>HTML5+CSS3 Basic</h1><br>
+               <h3>Website 제작자 : 곽경남. 노원구 노원동</h3>
+           </div>
+      
+    </footer>
+</body>
+</html>
