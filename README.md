@@ -24,7 +24,7 @@ GIF Images
 
 | JavaScript | TypeScript |  HTML   |  Spring  |
 | :--------: | :--------: | :------: | :-----: |
-|   ![js]    |   ![ts]    | ![react] | ![node] |
+|   ![js]    |   ![ts]    | ![react] | ![spring-icon-svgrepo-com] |
 
 <br>
 
