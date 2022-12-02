@@ -2,7 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.seofriends.mapper.CartMapper">
 
-	<!--카트 추가  -->
+	<!-- 
+	     카트 추가 
+	     장바구니 동일 아이디와 동일 상품 존재시 업데이트,
+             존재하지 않으면 삽입 -> MERGE 문법 사용.
+  	-->
+	 
 	<insert id="cart_add" parameterType="com.seofriends.domain.CartVO">
 		MERGE INTO
 	    	CART_TBL
