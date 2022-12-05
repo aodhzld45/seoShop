@@ -150,7 +150,7 @@
 		    <version>2.7.4</version>
 		</dependency>
 		
-		<!-- mybatis를 사용시 sql구문에 대한 상세로그를 출력. -->
+		<!-- mybatis를 사용시 sql 구문에 대한 상세로그를 출력. (SQL log)-->
 		<!-- 1)log4jdbc.log4j2.properties 2)logback.xml 2개의 파일을 src/main/resource 폴더에 복사 -->
 		<!-- 로그 level제어설정 : log4j.xml -->
 		<dependency>
