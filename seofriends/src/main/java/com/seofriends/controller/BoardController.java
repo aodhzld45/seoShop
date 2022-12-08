@@ -134,7 +134,7 @@ public class BoardController {
 	@RequestMapping(value ="/fileDown")
 	public void fileDown(@RequestParam Map<String, Object> map, HttpServletResponse response) throws Exception{
 		Map<String, Object> resultMap = boardservice.selectFileInfo(map);
-		String storedFileName = (String) resultMap.get("STORED_FILE_NAME");
+		String storedFileName = (String) resultMap.get("STORED_FILE_NAME"); //컬럼정의
 		String originalFileName = (String) resultMap.get("ORG_FILE_NAME");
 		
 		// 파일을 저장했던 위치에서 첨부파일을 읽어 byte[]형식으로 변환한다.
