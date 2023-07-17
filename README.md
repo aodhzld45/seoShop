@@ -1,4 +1,4 @@
-# 프로젝트 이름
+#  SEO Friends
 
 <p align="center">
   <br>
