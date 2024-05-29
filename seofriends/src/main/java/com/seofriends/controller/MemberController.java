@@ -99,6 +99,7 @@ public class MemberController {
 		ResponseEntity<String> entity = null;
 		
 		String authCode = (String) session.getAttribute("authCode");
+		log.info(authCode);
 		
 		if (authCode.equals(authCode)) {
 			
