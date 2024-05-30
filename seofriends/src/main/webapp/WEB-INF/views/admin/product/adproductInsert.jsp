@@ -20,31 +20,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <!--Admin LTE CSS 파일들.  -->
   <%@ include file="/WEB-INF/views/admin/include/plugin1.jsp" %>
-  
-
-	
 
 </head>
-<!--
-BODY TAG OPTIONS:
-=================
-Apply one or more of the following classes to get the
-desired effect
-|---------------------------------------------------------|
-| SKINS         | skin-blue                               |
-|               | skin-black                              |
-|               | skin-purple                             |
-|               | skin-yellow                             |
-|               | skin-red                                |
-|               | skin-green                              |
-|---------------------------------------------------------|
-|LAYOUT OPTIONS | fixed                                   |
-|               | layout-boxed                            |
-|               | layout-top-nav                          |
-|               | sidebar-collapse                        |
-|               | sidebar-mini                            |
-|---------------------------------------------------------|
--->
+
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
@@ -169,7 +147,7 @@ desired effect
     				</div>
     			  	<div class="from-group row">
     					<div class="col-sm12 text-center">
-    						<button type="submit" class="btn btn-primary" id="btnJoin">상품등록</button>
+    						<button type="submit" class="btn btn-primary" id="btnJoin" onclick="validation_chk()">상품등록</button>
     					</div>
     				</div>
     		
@@ -209,6 +187,8 @@ desired effect
 <script>
 	$(document).ready(function() {
 
+		validation_chk();
+	
 		// ckeditor 환경설정.
 		var ckeditor_config = {
 			resize_enabled : false,
@@ -274,6 +254,82 @@ desired effect
 
 
 	});
+
+let validation_flag = false;
+
+function validation_chk() {
+    $("#productForm").on("submit", function(event) {
+
+        let isValid = true;
+
+        $(".error-message").remove();
+
+        let productName = $("#pdt_name").val().trim();
+
+        if (productName === "") {
+            $("#pdt_name").after("<span class='error-message' style='color:red;'>상품명을 입력해주세요.</span>");
+            isValid = false;
+        }
+
+        let productPrice = $("#pdt_price").val().trim();
+
+        if (productPrice === "" || isNaN(productPrice) || productPrice <= 0) {
+            $("#pdt_price").after("<span class='error-message' style='color:red;'>유효한 상품가격을 입력해주세요.</span>");
+            isValid = false;
+        }
+
+        let productDiscount = $("#pdt_discount").val().trim();
+		
+        if (productDiscount === "" || isNaN(productDiscount) || productDiscount < 0 || productDiscount > 100) {
+            $("#pdt_discount").after("<span class='error-message' style='color:red;'>유효한 할인율을 입력해주세요 (0-100).</span>");
+            isValid = false;
+        }
+
+        let productCompany = $("#pdt_company").val().trim();
+
+        if (productCompany === "") {
+            $("#pdt_company").after("<span class='error-message' style='color:red;'>제조사를 입력해주세요.</span>");
+            isValid = false;
+        }
+
+        let uploadFile = $("#uploadFile").val().trim();
+        if (uploadFile === "") {
+            $("#uploadFile").after("<span class='error-message' style='color:red;'>상품 이미지를 업로드해주세요.</span>");
+            isValid = false;
+        }
+
+        let productDetail = CKEDITOR.instances.pdt_detail.getData().trim();
+
+        if (productDetail === "") {
+            $("#pdt_detail").after("<span class='error-message' style='color:red;'>상품 설명을 입력해주세요.</span>");
+            isValid = false;
+        }
+
+        let productAmount = $("#pdt_amount").val().trim();
+
+        if (productAmount === "" || isNaN(productAmount) || productAmount <= 0) {
+            $("#pdt_amount").after("<span class='error-message' style='color:red;'>유효한 수량을 입력해주세요.</span>");
+            isValid = false;
+        }
+
+        let firstCategory = $("#firstCategory").val().trim();
+
+        let secondCategory = $("#SecondCategory").val().trim();
+
+        if (firstCategory === "" || secondCategory === "") {
+            $("#SecondCategory").after("<span class='error-message' style='color:red;'>카테고리를 선택해주세요.</span>");
+            isValid = false;
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+}
+
+
+
+
 
 
 </script>
