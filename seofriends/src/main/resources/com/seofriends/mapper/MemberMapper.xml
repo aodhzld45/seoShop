@@ -8,13 +8,14 @@
 		(
 			MEM_ID, MEM_NAME, MEM_PW, MEM_EMAIL,
 		 	MEM_ZIPCODE, MEM_ADDR, MEM_ADDR_D, 
-			MEM_PHONE, MEM_NICK, MEM_ACCEPT_E)
+			MEM_PHONE, MEM_NICK, MEM_ACCEPT_E, MEM_AUTHCODE
+		)
 		VALUES
 		( 
 			#{mem_id}, #{mem_name}, #{mem_pw}, #{mem_email}, 
 			#{mem_zipcode}, #{mem_addr},#{mem_addr_d},
-			 #{mem_phone}, #{mem_nick}, #{mem_accept_e}
-		)	
+			#{mem_phone}, #{mem_nick}, #{mem_accept_e}, #{mem_authcode}
+		)
 	</insert>
 	
 	<!--아이디 중복체크  -->
@@ -57,6 +58,11 @@
 		WHERE 
 			MEM_ID = #{mem_id}
 	</update>
+	
+<!-- 	<update id="authAccept">
+		UPDATE MEMBER_TBL
+		SET MEM_AUTHCODE = 'Y'
+	</update> -->
 	
 	<!-- 회원정보 수정  -->
 	<update id="modify" parameterType="com.seofriends.domain.MemberVO">

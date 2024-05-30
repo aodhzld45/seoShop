@@ -60,11 +60,14 @@ public class MemberController {
 		log.info("암호화된  비밀번호 길이 :" + cryptEncoderPW.length());
 		
 		vo.setMem_pw(cryptEncoderPW);
+		vo.setMem_authcode("Y");
 		
 		if (vo.getMem_accept_e().equals("on")) {
 			vo.setMem_accept_e("Y");
 		}
-		log.info(vo); //vo.toString()이 생략됨.
+		
+		
+		log.info("회원가입 데이터 = {}" + vo.toString()); //vo.toString()이 생략됨.
 		
 		service.join(vo);
 		

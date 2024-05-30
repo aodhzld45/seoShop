@@ -8,7 +8,7 @@
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 		<properties>
-		<java-version>11</java-version>
+		<java-version>1.8</java-version>
 		<org.springframework-version>5.0.7.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.9.0</org.aspectj-version><!--AOP기능구현시 사용할 보조적인 문법   -->
 		<org.slf4j-version>1.7.25</org.slf4j-version>
