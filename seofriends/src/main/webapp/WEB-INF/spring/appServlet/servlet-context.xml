@@ -34,8 +34,11 @@
 		<beans:property name="suffix" value=".jsp" /> <!--접미어  -->
 	</beans:bean>
 	
-	<!--파일 업로드 bean 설정. id="multipartResolver" 예약어  -->
-	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver" />
+	<!--파일 업로드 bean 설정. id="multipartResolver" 최대용량 300mb  -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <beans:property name="maxUploadSize" value="300000000" />
+        <beans:property name="maxInMemorySize" value="300000000" />
+    </beans:bean>
 
 	<!-- CKEditor사용 리눅스 업로드 폴더 /usr/local/tomcat/tomcat9/webapps/upload -->
 	<!-- /usr/local/tomcat/upload -->
