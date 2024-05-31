@@ -21,10 +21,10 @@
        <form action="/admin/adLoginPost" method="post">
           <fieldset class="clearfix">
            <p><span class="fa fa-user"></span>
-           <input type="text" id="admin_id" name="admin_id" Placeholder="Username" required></p>
+           <input type="text" id="mem_id" name="mem_id" Placeholder="Username" required></p>
             <!-- JS because of IE support; better: placeholder="Username" -->
 			<p><span class="fa fa-lock"></span>
-			<input type="password" id="admin_pw" name="admin_pw"  Placeholder="Password" required></p> 
+			<input type="password" id="mem_pw" name="mem_pw"  Placeholder="Password" required></p> 
 			
 		<!-- JS because of IE support; better: placeholder="Password" -->
 			<div>
@@ -48,5 +48,48 @@
       	</div>
 	</div>
 </div>
+
+	<%@ include file="/WEB-INF/views/include/common.jsp" %> 
+
+
+<script>
+	$(document).ready(function(){
+		sessionStatus();
+	});
+
+
+function sessionStatus(){
+	    var adminStatus = '${sessionScope.adminstatus}';
+	
+	console.log(adminStatus);
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>

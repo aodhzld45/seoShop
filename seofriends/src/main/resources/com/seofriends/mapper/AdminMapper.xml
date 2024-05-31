@@ -11,6 +11,21 @@
 		WHERE ADMIN_ID = #{admin_id}
 	</select>
 	
+	<!-- 2024-05-31 관리자 사용자 권한 프로세스 변경  -->
+	<select id="adlogin" parameterType="com.seofriends.domain.MemberVO" resultType="com.seofriends.domain.MemberVO">
+		SELECT
+		    MEM_ID, MEM_NAME, MEM_PW, MEM_EMAIL,
+		    MEM_ZIPCODE, MEM_ADDR, MEM_ADDR_D, MEM_PHONE,
+		    MEM_NICK, MEM_ACCEPT_E, MEM_POINT, 
+		    TO_CHAR(MEM_DATE_SUB, 'YYYY-MM-DD HH24:MI:SS') AS MEM_DATE_SUB,
+		    TO_CHAR(MEM_DATE_UP, 'YYYY-MM-DD HH24:MI:SS') AS MEM_DATE_UP,
+		    TO_CHAR(MEM_DATE_LAST, 'YYYY-MM-DD HH24:MI:SS') AS MEM_DATE_LAST,
+		    MEM_VERIFY, MEM_AUTHCODE
+		FROM MEMBER_TBL
+		WHERE 1=1
+		AND MEM_VERIFY = 9
+		AND MEM_ID = #{mem_id}
+	</select>
 
 
 

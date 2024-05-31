@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.seofriends.domain.AdminVO;
+import com.seofriends.domain.MemberVO;
 import com.seofriends.service.AdminService;
 
 import lombok.Setter;
@@ -22,7 +23,7 @@ import lombok.extern.log4j.Log4j;
 public class AdminController {
 
 	@Autowired
-	private AdminService service;
+	private AdminService adminService;
 	
 	//spring-security 암호화 라이브러리 DI 주입	
 	@Setter(onMethod_ = {@Autowired})
@@ -37,14 +38,18 @@ public class AdminController {
 	
 //	관리자 로그인 POST 데이터 전송
 	@PostMapping("/adLoginPost")
-	public String adLoginPost(AdminVO vo, RedirectAttributes rttr, HttpSession session ) throws Exception{
-		log.info("로그인 정보 :" + vo);
+	public String adLoginPost(MemberVO memberVO, RedirectAttributes rttr, HttpSession session ) throws Exception{
+		log.info("로그인 정보 :" + memberVO);
+		
 		String url = "";
 		//로그인 인증 작업
-		AdminVO dbres = service.adlogin_ok(vo);
+		//AdminVO dbres = service.adlogin_ok(vo);
 		
+		//2024-05-31 로그인 프로세스 변경
+		MemberVO dbres = adminService.adlogin(memberVO);
+
 		if (dbres != null) { //아이디가 존재할 경우
-			if (bCryptPasswordEncoder.matches(vo.getAdmin_pw(),dbres.getAdmin_pw())) { //비밀번호가 일치할 경우
+			if (bCryptPasswordEncoder.matches(memberVO.getMem_pw(), dbres.getMem_pw())) { //비밀번호가 일치할 경우
 				//로그인 인증성공
 				session.setAttribute("adminstatus", dbres);
 				url = "admin/admain";

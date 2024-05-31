@@ -8,6 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.seofriends.domain.AdminVO;
+import com.seofriends.domain.MemberVO;
 
 //관리자 로그인 인터셉터 
 public class AdminInterCeptor extends HandlerInterceptorAdapter{
@@ -21,7 +22,11 @@ public class AdminInterCeptor extends HandlerInterceptorAdapter{
 		//인증된 사용자인지 여부를 체크. 세션 객체를 확인한다.
 		HttpSession session = request.getSession();
 		//session.getAttribute("로그인시 세션키");
-		AdminVO user = (AdminVO) session.getAttribute("adminstatus");
+		
+//		AdminVO user = (AdminVO) session.getAttribute("adminstatus");
+		
+//		2024-05-31 관리자 로그인 정책 변경 Member Table에서 MEM_VERIFY 값이 9인 경우 총 시스템 관리자
+		MemberVO user = (MemberVO) session.getAttribute("adminstatus");
 		
 		if (user == null) { //인증 정보가 존재하지 않음. -> 비로그인 사용자.
 			result = false;
