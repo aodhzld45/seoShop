@@ -103,7 +103,9 @@ public class OrderController {
 		log.info("주문 정보" + o_vo);
 		log.info("결제 정보" + p_vo);
 		
-//		1.무통장 입금일 경우.
+		System.out.println("type = {}" + type);
+		
+//		1. 무통장 입금일 경우.
 		if (type.equals("무통장입금")) {
 			o_vo.setPayment_status("무통장 입금완료");
 			p_vo.setPay_tot_price(o_vo.getOdr_total_price()); //총 실제 결제금액.
@@ -111,12 +113,13 @@ public class OrderController {
 		}
 		
 //		2. 카카오 페이 결제일 경우.
-//		if (type.equals("카카오페이")) {
-//			o_vo.setPayment_status("입금 전");
-//			
-//			p_vo.setPay_tot_price(o_vo.getOdr_total_price()); //총 실제 결제금액.
-//			p_vo.setPay_rest_price(0); //추가 입금 금액
-//		}
+		if (type.equals("카카오페이")) {
+			o_vo.setPayment_status("카카오페이 결제완료");
+			p_vo.setPay_nobank_user(mem_id);
+			p_vo.setPay_nobank_price(0);
+			p_vo.setPay_tot_price(o_vo.getOdr_total_price()); //총 실제 결제금액.
+			p_vo.setPay_rest_price(0); //추가 입금 금액
+		}
 		
 		//주문 저장하기 기능 : 주문테이블, 주문상세 테이블, 장바구니 테이블 (삭제)
 		orderservice.orderbuy(o_vo, p_vo);
