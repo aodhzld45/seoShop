@@ -56,7 +56,7 @@
 	  <property name="host" value="smtp.gmail.com" />
 	  <property name="port" value="587" />
 	  <property name="username" value="aodhzld45@gmail.com" />
-	  <property name="password" value="발급한토큰값" />
+	  <property name="password" value="mobdxksufvffjnvk" />
 	  <property name="javaMailProperties">
 	  <props>
 	    <prop key="mail.smtp.auth">true</prop>
@@ -68,6 +68,30 @@
 	  </props>
 	  </property>
 	</bean> 
+	
+	<!-- kakao 로그인 키값 설정  -->
+	
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="kakao.rest.api.key">kakao developers에서 발급한 rest api키 값</prop>
+                <prop key="kakao.redirect.uri">kakao developers에서 설정한 redirect URI 값</prop>
+            </props>
+        </property>
+    </bean>
+	
+	
+	<bean id="KaKaoApi" class="com.seofriends.kakaopay.KaKaoApi">
+        <property name="restApiKey" value="${kakao.rest.api.key}"/>
+        <property name="redirectUri" value="${kakao.redirect.uri}"/>
+    </bean>
+    
+    
+    <bean id="kakaoApiService" class="com.seofriends.kakaopay.KakaoApiService">
+        <constructor-arg ref="KaKaoApi"/>
+    </bean>
+	
+	
 	
 
   	<!--AOP 관련 설정  -->

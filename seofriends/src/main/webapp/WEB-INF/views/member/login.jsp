@@ -33,7 +33,7 @@
 <%@ include file="/WEB-INF/views/user/include/header.jsp" %>
 	
 	<!-- 로그인 부분  -->
-	<div class="mb-3 text-center">
+<div class="mb-3 text-center">
 		<br>
 		<h3><b>로그인</b></h3>
 		<hr>
@@ -45,21 +45,27 @@
 		    	</div>
 		  </div>
 		  
-		  <div class="form-group row ">
+		<div class="form-group row ">
 		    <label for="inputPassword" class="col-sm-2 col-form-label">비밀번호</label>
 		    <div class="col-sm-5">
 		      <input type="password" class="form-control" id="mem_pw" name="mem_pw">
-		    </div>
+			</div>
 		  </div>
+
 		<div class="form-group row">
 			<div class="col-sm-8 text-center">
 				<button type="submit" class="btn btn-primary" id="btnlogin">로그인</button>
 				<button type="button" class="btn btn-primary" id="btnSearchIdPw">아이디 및 비밀번호 찾기</button>
 			</div>
 		</div>
-		</form>
 		
-  </div>
+	</form>
+</div>
+
+<!-- 카카오 로그인  -->
+<div class="mb-3 text-center">	
+	<img id="kakao_login" alt="kakao_login" src="/image/kako_login_m.png">  		
+</div>
   
 
   	<!--footer 부분 include  -->
@@ -102,6 +108,23 @@ $(document).ready(function(){
 
 	$("#btnSearchIdPw").on("click", function () {
 		location.href = "/member/usersearch"
+	});
+
+	//카카오 로그인 버튼클릭. (ajax구문 사용해야함.)
+	$("img#kakao_login").on("click",function () {
+		// 요청을 보내는 로직 
+		$.ajax({
+            url: '/member/kakao/authorize-url',
+            method: 'GET',
+            success: function(response) {
+				alert(response);
+                window.location.href = response;
+            },
+            error: function(xhr, status, error) {
+                console.error("Failed to get Kakao authorize URL: " + error);
+            }
+        });
+
 	});
 
 
