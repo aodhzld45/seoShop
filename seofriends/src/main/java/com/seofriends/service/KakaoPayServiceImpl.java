@@ -89,7 +89,7 @@ public class KakaoPayServiceImpl {
 	//kakao pay requset Header 정보 설정.
 	private HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "KakaoAK c4410234e6b587aef058f74e436333aa");
+		headers.set("Authorization", "kakaoDevel에서 발급한 앱키값");
 		headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 		
 		return headers;
