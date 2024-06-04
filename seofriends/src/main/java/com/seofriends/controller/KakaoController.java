@@ -1,6 +1,12 @@
 package com.seofriends.controller;
 
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,9 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.seofriends.kakaopay.KaKaoApi;
-import com.seofriends.kakaopay.KakaoApiService;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -30,7 +34,7 @@ public class KakaoController {
 	}
 
 	@GetMapping("/callback")
-	public String getAccessToken(@RequestParam("code") String code) {
+	public String getAccessToken(@RequestParam("code") String code, HttpServletResponse httpServletResponse) {
 		
 		// Access Token 요청 부분
 		// 1. header 생성
@@ -50,19 +54,37 @@ public class KakaoController {
         
         // 4. http 요청하기        
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Object> response = restTemplate.exchange(
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
         		"https://kauth.kakao.com/oauth/token",
         		HttpMethod.POST,
         		httpEntity,
-        		Object.class
+                new ParameterizedTypeReference<Map<String, Object>>() {}
         );
         
         System.out.println(response.getBody().toString());
+        
+        Map<String, Object> responseBody = response.getBody();
+        
+        if (responseBody != null && responseBody.containsKey("access_token")) {
+        	String accessToken = (String) responseBody.get("access_token");
+        	
+            Cookie cookie = new Cookie("access_token", accessToken);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);  // JavaScript로 접근하지 못하게 설정
+            cookie.setMaxAge(60 * 60 * 24);  // 쿠키 유효기간 설정 (예: 1일)
+            httpServletResponse.addCookie(cookie);
+			
+		}
         
 		
 		return "redirect:/";
 		
 	}
+	
+	
+	/*
+	 * @GetMapping("/kapi.kakao.com/v2/user/me") public
+	 */
 	
 	
 }
