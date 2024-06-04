@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.seofriends.domain.MemberVO;
 import com.seofriends.dto.EmailDTO;
 import com.seofriends.dto.LoginDTO;
+import com.seofriends.kakaopay.KaKaoApi;
+import com.seofriends.kakaopay.KakaoApiService;
 import com.seofriends.service.EmailService;
 import com.seofriends.service.MemberService;
 
@@ -41,6 +43,13 @@ public class MemberController {
 	
 	@Setter(onMethod_ = {@Autowired})
 	private EmailService mailservice;
+	
+	@Setter(onMethod_ = {@Autowired})
+	private KakaoApiService kakaoApiService;
+	
+	
+    private final KaKaoApi kaKaoApi = new KaKaoApi();
+
 	
 	//회원가입 폼 매핑
 	@GetMapping("/join")
@@ -335,10 +344,55 @@ public class MemberController {
 		
 		return "redirect:/";	
 	}
+//	https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info 참고...
 	
+//	STEP 1 : 인가 코드 받기
+	@GetMapping("/kakao/authorize-url")
+    public ResponseEntity<String> getAuthorizeUrl() {
+        String authorizeUrl = kakaoApiService.getAuthorizeUrl();
+        
+        return ResponseEntity.ok(authorizeUrl);
+    }
 	
-	
-	
-	
+//	STEP 2 : Access Token 발급 받기
+	/*
+	 * @GetMapping("/callback") public String getAccessToken(@RequestParam("code")
+	 * String code) {
+	 * 
+	 * // Access Token 요청 부분 // 1. header 생성 HttpHeaders httpHeaders = new
+	 * HttpHeaders(); httpHeaders.add(HttpHeaders.CONTENT_TYPE,
+	 * "application/x-www-form-urlencoded");
+	 * 
+	 * // 2. Body 생성 MultiValueMap<String, String> params = new
+	 * LinkedMultiValueMap<>(); params.add("grant_type", "authorization_code");
+	 * params.add("client_id", kaKaoApi.getRestApiKey() );
+	 * params.add("redirect_uri", kaKaoApi.getRedirectUri()); params.add("code",
+	 * code);
+	 * 
+	 * // 3. header + body 작성 HttpEntity<MultiValueMap<String, String>> httpEntity =
+	 * new HttpEntity<>(params, httpHeaders);
+	 * 
+	 * // 4. http 요청하기 RestTemplate restTemplate = new RestTemplate();
+	 * ResponseEntity<Object> response = restTemplate.exchange(
+	 * "https://kauth.kakao.com/oauth/token", HttpMethod.POST, httpEntity,
+	 * Object.class );
+	 * 
+	 * System.out.println(params); System.out.println(response);
+	 * 
+	 * return "redirect:/";
+	 * 
+	 * }
+	 */
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
