@@ -24,6 +24,11 @@
 <!-- Custom Json  -->
 <link rel="manifest" href="/css/manifest.json"> 
 
+<!-- toss paymentes widget -->
+<script src="https://js.tosspayments.com/v1/payment-widget"></script>
+
+
+
 <!-- Admin LTE 2.17 
 <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
 <!-- jQuery 3 -->
