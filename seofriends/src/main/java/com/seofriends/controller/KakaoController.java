@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.seofriends.kakao.KaKaoApi;
+import com.seofriends.kakao.KakaoApiService;
 import com.seofriends.service.MemberService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +32,25 @@ public class KakaoController {
 	@Autowired
 	private MemberService memberService;
 	
-	private final KaKaoApi kaKaoApi;
+	@Autowired
+	private  KaKaoApi kaKaoApi;
 	
 	@Autowired
-	public KakaoController(KaKaoApi kaKaoApi) {
-		this.kaKaoApi = kaKaoApi;
-	}
+	private KakaoApiService kakaoApiService;
 
+
+	
+//	STEP 1 : 인가 코드 받기
+	@GetMapping("/kakao/authorize-url")
+    public ResponseEntity<String> getAuthorizeUrl() {
+        String authorizeUrl = kakaoApiService.getAuthorizeUrl();
+        
+        return ResponseEntity.ok(authorizeUrl);
+    }
+	
+
+	
+//	STEP 2 : Access Token 발급 받기
 	@GetMapping("/callback")
 	public String getAccessToken(
 									@RequestParam("code") String code,

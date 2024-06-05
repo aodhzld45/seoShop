@@ -21,8 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.seofriends.domain.MemberVO;
 import com.seofriends.dto.EmailDTO;
 import com.seofriends.dto.LoginDTO;
-import com.seofriends.kakaopay.KaKaoApi;
-import com.seofriends.kakaopay.KakaoApiService;
 import com.seofriends.service.EmailService;
 import com.seofriends.service.MemberService;
 
@@ -43,13 +41,6 @@ public class MemberController {
 	
 	@Setter(onMethod_ = {@Autowired})
 	private EmailService mailservice;
-	
-	@Setter(onMethod_ = {@Autowired})
-	private KakaoApiService kakaoApiService;
-	
-	
-    private final KaKaoApi kaKaoApi = new KaKaoApi();
-
 	
 	//회원가입 폼 매핑
 	@GetMapping("/join")
@@ -346,13 +337,7 @@ public class MemberController {
 	}
 //	https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info 참고...
 	
-//	STEP 1 : 인가 코드 받기
-	@GetMapping("/kakao/authorize-url")
-    public ResponseEntity<String> getAuthorizeUrl() {
-        String authorizeUrl = kakaoApiService.getAuthorizeUrl();
-        
-        return ResponseEntity.ok(authorizeUrl);
-    }
+
 	
 //	STEP 2 : Access Token 발급 받기
 	/*
