@@ -114,7 +114,7 @@ $(document).ready(function(){
 	$("img#kakao_login").on("click",function () {
 		// 요청을 보내는 로직 
 		$.ajax({
-            url: '/member/kakao/authorize-url',
+            url: '/kakao/authorize-url',
             method: 'GET',
             success: function(response) {
 				alert(response);
