@@ -2,7 +2,6 @@ package com.seofriends.controller;
 
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +18,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.seofriends.kakaopay.KaKaoApi;
+import com.seofriends.kakao.KaKaoApi;
+import com.seofriends.service.MemberService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
 public class KakaoController {
+	
+	
+	@Autowired
+	private MemberService memberService;
 	
 	private final KaKaoApi kaKaoApi;
 	
@@ -34,8 +39,11 @@ public class KakaoController {
 	}
 
 	@GetMapping("/callback")
-	public String getAccessToken(@RequestParam("code") String code, HttpServletResponse httpServletResponse) {
-		
+	public String getAccessToken(
+									@RequestParam("code") String code,
+									HttpServletResponse httpServletResponse,
+									ModelMap model
+								) {
 		// Access Token 요청 부분
 		// 1. header 생성
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -61,25 +69,43 @@ public class KakaoController {
                 new ParameterizedTypeReference<Map<String, Object>>() {}
         );
         
-        System.out.println(response.getBody().toString());
-        
+        System.out.println("responseBody = {}" + response.getBody().toString());
+	    	
         Map<String, Object> responseBody = response.getBody();
+       
+        // access_token 값 Cookie에 저장 
+		/*
+		 * if (responseBody != null && responseBody.containsKey("access_token")) {
+		 * String accessToken = (String) responseBody.get("access_token"); Cookie cookie
+		 * = new Cookie("access_token", accessToken); cookie.setPath("/");
+		 * cookie.setHttpOnly(true); // JavaScript로 접근하지 못하게 설정 cookie.setMaxAge(60 * 60
+		 * * 24); // 쿠키 유효기간 설정 (예: 1일) httpServletResponse.addCookie(cookie); }
+		 */
+		
         
+        // 5. json 데이터로 꺼내오기 - access_token
         if (responseBody != null && responseBody.containsKey("access_token")) {
         	String accessToken = (String) responseBody.get("access_token");
+        	String refreshToken = (String) responseBody.get("refresh_token");
         	
-            Cookie cookie = new Cookie("access_token", accessToken);
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);  // JavaScript로 접근하지 못하게 설정
-            cookie.setMaxAge(60 * 60 * 24);  // 쿠키 유효기간 설정 (예: 1일)
-            httpServletResponse.addCookie(cookie);
-			
+        	System.out.println("accessToken의 값은 = " + accessToken.toString());
+        	System.out.println("refreshToken의 값은 = " + refreshToken.toString());
+        	
+        	model.addAttribute("accessToken", accessToken);
+        	model.addAttribute("refreshToken", refreshToken);
+
 		}
         
-		
-		return "redirect:/";
+        
+		return "http://localhost:9090/";
 		
 	}
+	
+	
+	
+	
+	
+	
 	
 	
 	/*

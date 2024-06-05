@@ -7,8 +7,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.seofriends.kakaopay.ApproveResponse;
-import com.seofriends.kakaopay.ReadyResponse;
+import com.seofriends.kakao.ApproveResponse;
+import com.seofriends.kakao.ReadyResponse;
 
 import lombok.extern.log4j.Log4j;
 
@@ -89,7 +89,7 @@ public class KakaoPayServiceImpl {
 	//kakao pay requset Header 정보 설정.
 	private HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "kakaoDevel에서 발급한 앱키값");
+		headers.set("Authorization", "KakaoAK c4410234e6b587aef058f74e436333aa");
 		headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 		
 		return headers;

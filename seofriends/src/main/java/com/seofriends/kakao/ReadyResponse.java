@@ -1,4 +1,4 @@
-package com.seofriends.kakaopay;
+package com.seofriends.kakao;
 
 import lombok.Getter;
 import lombok.Setter;

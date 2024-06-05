@@ -1,4 +1,4 @@
-package com.seofriends.kakaopay;
+package com.seofriends.kakao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
