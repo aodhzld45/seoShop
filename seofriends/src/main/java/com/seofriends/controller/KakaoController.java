@@ -49,9 +49,17 @@ public class KakaoController {
 		
 		MemberVO memberVO = new MemberVO();
 		memberVO.setMem_id(userInfo.getId().toString());
-		
+		memberVO.setMem_name(userInfo.getKakaoAccount().getProfile().getNickName());
+		memberVO.setMem_pw("");
 		memberVO.setMem_email(userInfo.getKakaoAccount().getEmail());
+		memberVO.setMem_zipcode("");
+		memberVO.setMem_addr("");
+		memberVO.setMem_addr_d("");
+		memberVO.setMem_phone("");		
 		memberVO.setMem_nick(userInfo.getKakaoAccount().getProfile().getNickName());
+		memberVO.setMem_accept_e("N");
+		memberVO.setMem_point(0);
+		memberVO.setMem_authcode("Y");
 		
 		
 		System.out.println("memberVO에 Setting된 값 = " + memberVO);
@@ -64,9 +72,6 @@ public class KakaoController {
 
 		
 		// 카카오 로그인 + 기존의 MemberService Login
-		
-		
-		
 		
 	
 		return new ResponseEntity<>(HttpStatus.OK);
