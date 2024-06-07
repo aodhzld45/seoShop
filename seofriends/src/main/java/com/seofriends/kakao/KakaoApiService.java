@@ -1,5 +1,7 @@
 package com.seofriends.kakao;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -9,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class KakaoApiService {
 		this.kaKaoApi = new KaKaoApi();
 		kaKaoApi.getRestApiKey(); // client_id 값 셋팅.
 		KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com/oauth/token";
-		KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
+		KAUTH_USER_URL_HOST = "https://kapi.kakao.com/v2/user/me";
 	}
 	
 	// 인가 코드를 받는 getAuthorizeUrl 메서드
@@ -84,39 +84,63 @@ public class KakaoApiService {
         if (kakaoTokenResponseDto == null) {
             throw new RuntimeException("토큰 발급에 실패하였습니다.");
         }
-
+        
+        // kakaoTokenResponseDto 전체 출력
+        log.info("kakaoTokenResponseDto = {} " + kakaoTokenResponseDto);
+        
         // 로그 출력
-        System.out.println(" [Kakao Service] Access Token ------> {}" +  kakaoTokenResponseDto.getAccessToken());
-        log.info(" [Kakao Service] Refresh Token ------> {}", kakaoTokenResponseDto.getRefreshToken());
-        log.info(" [Kakao Service] Id Token ------> {}", kakaoTokenResponseDto.getIdToken());
-        log.info(" [Kakao Service] Scope ------> {}", kakaoTokenResponseDto.getScope());
-        
-        
+        System.out.println(" [Kakao Service] Access Token ------> " +  kakaoTokenResponseDto.getAccessToken());
+        System.out.println(" [Kakao Service] Refresh Token ------> " + kakaoTokenResponseDto.getRefreshToken());
+        System.out.println(" [Kakao Service] Id Token ------> " + kakaoTokenResponseDto.getIdToken());
+        System.out.println(" [Kakao Service] Scope ------> " +  kakaoTokenResponseDto.getScope());
         
 
 		return kakaoTokenResponseDto.getAccessToken();
 		
-
-		
-    	
   }
     
+    // 사용자의 정보를 가져오는 getUserInfo 메서드
+    
+    public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
+    	
+		// 1. header 생성
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE,  "application/x-www-form-urlencoded;charset=utf-8");
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken); // access token 인가
+               
+        // 2. http 요청하기        
+        RestTemplate restTemplate = new RestTemplate();
+        
+        // 3.
+        HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<HashMap<String,Object>>(httpHeaders);
+        
+       
+        ResponseEntity<KakaoUserInfoResponseDto> responseEntity  = restTemplate.exchange(
+        			KAUTH_USER_URL_HOST,
+        			HttpMethod.POST,
+        			httpEntity,
+        			KakaoUserInfoResponseDto.class
+        );
+        
+    	KakaoUserInfoResponseDto userInfo = responseEntity.getBody();
+    	
+    	System.out.println("[ Kakao Service ] Auth ID ---> {} " + userInfo.getId());
+    	System.out.println("[ Kakao Service ] NickName ---> {} " + userInfo.getKakaoAccount().getProfile().getNickName());
+    	System.out.println("[ Kakao Service ] Email ---> {} " + userInfo.getKakaoAccount().getEmail());
+    	System.out.println("[ Kakao Service ] Gender ---> {} " + userInfo.getKakaoAccount().getGender());
+    	System.out.println("[ Kakao Service ] BirthDay ---> {} " + userInfo.getKakaoAccount().getBirthDay());
+
+		return userInfo;
+    }
     
     
     
     
     
-   
     
     
     
     
     
-    
-    
-    
-    
-    
-    
-	
+    	
 }
