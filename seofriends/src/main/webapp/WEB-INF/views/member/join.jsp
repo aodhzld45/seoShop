@@ -121,6 +121,13 @@
 		  </div>
 		  
 		  <div class="form-group row">
+		    <label for="staticEmail" class="col-sm-2 col-form-label">지도</label>
+			<div id="map" style="width:500px;height:400px;"></div>
+
+		  </div>
+		  
+		  
+		  <div class="form-group row">
 			<div class="col-sm-10"> 
 			  <label class="form-check-label" for="defaultCheck1">메일 수신 동의 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			  <input class="form-check-input" type="checkbox" id="mem_accept_e" name="mem_accept_e">
@@ -261,18 +268,9 @@ $("#btnConfirmAuthcode").on("click", function() {
 				isAuthCode = false;
 			}
 		}
-
-
-
 	});
-	
 });
    
-
-
-
-
-
 
 });
 
@@ -281,21 +279,15 @@ $("#btnConfirmAuthcode").on("click", function() {
 
 
 
-
-
-
-
-
-
-
-
 <!-- 다음 주소 API Script-->
 <!-- iOS에서는 position:fixed 버그가 있음, 적용하는 사이트에 맞게 position:absolute 등을 이용하여 top,left값 조정 필요 -->
 <div id="layer" style="display:none;position:fixed;overflow:hidden;z-index:1;-webkit-overflow-scrolling:touch;">
-<img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnCloseLayer" style="cursor:pointer;position:absolute;right:-3px;top:-3px;z-index:1" onclick="closeDaumPostcode()" alt="닫기 버튼">
+	<img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnCloseLayer" style="cursor:pointer;position:absolute;right:-3px;top:-3px;z-index:1" onclick="closeDaumPostcode()" alt="닫기 버튼">
 </div>
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9f347f217f02114e157558d1b1b049cf&libraries=services"></script>
+
 <script>
     // 우편번호 찾기 화면을 넣을 element
     var element_layer = document.getElementById('layer'); //<div id="layer"> 태그가 현재 실행코드보다 앞에 작성되어 있어야 한다.
@@ -306,9 +298,55 @@ $("#btnConfirmAuthcode").on("click", function() {
         element_layer.style.display = 'none';
     }
 
+	var mapContainer = document.getElementById('map');
+
+	var mapOption  = {
+			center: new kakao.maps.LatLng(33.450701, 126.570667),
+			level: 3
+	};
+
+   	// 지도를 미리 생성
+	var map = new kakao.maps.Map(mapContainer, mapOption);
+
+	// 주소-좌표 변환 객체를 생성
+    var geocoder = new daum.maps.services.Geocoder();
+
+	// 마커를 미리 생성
+	var marker = new kakao.maps.Marker({
+		position: new kakao.maps.LatLng(37.537187, 127.005476),
+		map: map
+	});
+
+	// 현재 위치의 좌표값 
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(function(position) {
+			var lat = position.coords.latitude;
+			var lon = position.coords.longitude;
+			var locPosition = new kakao.maps.LatLng(lat, lon);
+
+			// Set the initial marker to the user's current location
+			map.setCenter(locPosition);
+			marker.setPosition(locPosition);
+		}, function(error) {
+			console.error('Geolocation error: ' + error.message);
+		});
+	} else {
+		console.error('Geolocation is not supported by this browser.');
+	}
+
     function sample2_execDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
+
+				/*
+				  	roadAddress - 도로명 주소
+  					jibunAddress - 지번 주소
+				*/
+
+				console.log(data);
+				console.log("우편 API 도로명  = " , data.roadAddress);
+				console.log("우편 API 지번주소명  = " , data.jibunAddress);
+				console.log("우편 API 우편번호  = " , data.zonecode);
                 // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                 // 각 주소의 노출 규칙에 따라 주소를 조합한다.
@@ -348,6 +386,22 @@ $("#btnConfirmAuthcode").on("click", function() {
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
                 document.getElementById('sample2_postcode').value = data.zonecode;
                 document.getElementById("sample2_address").value = addr;
+
+				geocoder.addressSearch(data.address, function(results, status) {
+				// 정상적으로 검색이 완료됐으면
+				if(status === daum.maps.services.Status.OK) {
+					var result = results[0]; //첫번째 결과의 값을 활용
+					// 해당 주소에 대한 좌표를 받아서
+                    var coords = new daum.maps.LatLng(result.y, result.x);
+					// 지도를 보여준다.
+                    mapContainer.style.display = "block";
+                    map.relayout();
+					// 지도 중심을 변경한다.
+                    map.setCenter(coords);
+                	// 마커를 결과값으로 받은 위치로 옮긴다.
+                    marker.setPosition(coords)
+				}
+			});
                 // 커서를 상세주소 필드로 이동한다.
                 document.getElementById("sample2_detailAddress").focus();
 
@@ -383,12 +437,33 @@ $("#btnConfirmAuthcode").on("click", function() {
         element_layer.style.left = (((window.innerWidth || document.documentElement.clientWidth) - width)/2 - borderWidth) + 'px';
         element_layer.style.top = (((window.innerHeight || document.documentElement.clientHeight) - height)/2 - borderWidth) + 'px';
     }
+    
+    
+ // 카카오맵 API를 사용하여 주소를 좌표로 변환하는 함수
+    function geocodeAddress(address) {
+        var geocoder = new kakao.maps.services.Geocoder();
+        geocoder.addressSearch(address, function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-	
+                // 지도를 이동시킵니다.
+                map.setCenter(coords);
 
+                // 결과값으로 받은 위치를 마커로 표시합니다.
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: coords
+                });
 
-
-
+                // 인포윈도우로 장소에 대한 설명을 표시합니다.
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: '<div style="width:150px;text-align:center;padding:6px 0;">' + address + '</div>'
+                });
+                infowindow.open(map, marker);
+            } 
+        });
+    }
+    
 
 </script>
 
