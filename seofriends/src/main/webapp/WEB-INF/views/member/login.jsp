@@ -21,6 +21,18 @@
 		}else if (msg == "passwdFailure") {
 			alert("비밀번호를 확인해주세요.");
 		}
+    	
+    	let isuserID = "${isuserID}";
+    	
+    	console.log(isuserID);
+    	
+    	if(isuserID === "N") {
+			alert("이미 가입된 카카오 계정입니다.");
+    	}else if (isuserID === "Y") {
+			alert("성공적으로 카카오 로그인으로 회원가입 되었습니다.");
+    	}
+    	
+    	
     </script>
     
     
@@ -126,10 +138,11 @@ $(document).ready(function(){
         });
 
 	});
+	
 
+	 
 
-
-
+	
 });
 </script>
 
