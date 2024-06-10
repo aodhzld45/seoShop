@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -132,6 +133,43 @@ public class KakaoApiService {
 
 		return userInfo;
     }
+    
+    
+    // kakao 지도 Map API get    
+    public String  getKakaoMapAddress(double lat, double lon) {
+    	
+        String url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=" + lon + "&y=" + lat;
+    	
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.add("Authorization", "KakaoAK " + restApiKey);
+    	
+        RestTemplate restTemplate = new RestTemplate();
+        
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(
+        		url,
+        		HttpMethod.GET,
+        		httpEntity,
+        		String.class
+        	);
+        
+        System.out.println(response.getBody());
+        
+        
+        if (response.getStatusCodeValue() == 200) {
+            return response.getBody();
+
+        } else {
+            throw new RuntimeException("Failed to get address from coordinates");
+        }
+        
+    }
+    
+    
+    
+
+    	
+    
     
     
     
