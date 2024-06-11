@@ -170,7 +170,6 @@ public class MemberController {
 			url = "/member/login"; //로그인 폼 주소.
 			msg = "idFailure";
 		}
-		
 		rttr.addFlashAttribute("msg", msg); //이동하는 주소의 jsp에서 참조함.
 		return "redirect:" + url;
 	}
